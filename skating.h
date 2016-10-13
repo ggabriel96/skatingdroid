@@ -6,9 +6,6 @@
 #define CENTER_X 0.0
 #define CENTER_Y 0.0
 #define CENTER_Z 0.0
-#define CAM_X 0.0
-#define CAM_Y 0.0
-#define CAM_Z 40.0
 #define OBJ_SLICES 64
 #define OBJ_STACKS 64
 #define DROID_LEFT -1
@@ -24,9 +21,13 @@ const double DROID_ARM_RADIUS = (DROID_RADIUS / 4.0);
 const double DROID_LEG_LENGTH = (DROID_HEIGHT / 2.5);
 const double DROID_LEG_RADIUS = DROID_ARM_RADIUS;
 const GLubyte color_droid[] = {164, 199, 57};
+const double ONE_STEP = 2 * M_PI / 180;
+const double SIN_ONE_STEP = sin(ONE_STEP);
+const double COS_ONE_STEP = cos(ONE_STEP);
 
 void idle(void);
 void display(void);
 void reshape(GLsizei, GLsizei);
+void special(int, int, int);
 void init_gl(void);
 int init_defquad(void);

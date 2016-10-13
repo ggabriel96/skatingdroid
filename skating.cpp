@@ -1,28 +1,45 @@
+#include <math.h>
 #include <stdio.h>
 #include <GL/glut.h>
 #include "skating.h"
 
 GLUquadricObj *defquad = NULL;
+double cam_x_angle = 0.0, cam_y_angle = 0.0;
+double cam_x = 1.0, cam_y = 1.0, cam_z = 40.0;
 
 void identity(GLenum model) {
   glMatrixMode(model);
   glLoadIdentity();
 }
 
+void drawEllipse(double radx, double rady, int slices) {
+  int d;
+  double rad = 2 * M_PI / slices, x, y;
+	glBegin(GL_POLYGON);
+	for (d = 0; d <= slices; d++) {
+		x = radx * sin(d * rad);
+		y = rady * cos(d * rad);
+    // glNormal3d(x, y, 0.0);
+		glVertex3d(x, y, 0.0);
+	}
+	glEnd();
+}
+
 void draw_droid_antenna(int dir) {
+  double delta_y = (DROID_HEIGHT / 2.0) + DROID_RADIUS + DROID_ANT_LENGTH - DROID_RATIO;
   glPushMatrix();
 
-  glTranslated(dir == DROID_LEFT ? - DROID_RADIUS / 2.0 : DROID_RADIUS / 2.0, 0.0, 0.0);
+  glRotated(15.0, 0.0, 0.0, dir == DROID_LEFT ? 1.0 : -1.0);
 
   // antenna
   glPushMatrix();
-  glTranslated(0.0, (DROID_HEIGHT / 2.0) + DROID_RADIUS + DROID_ANT_LENGTH - DROID_RATIO, 0.0);
+  glTranslated(0.0, delta_y, 0.0);
   glRotated(90.0, 1.0, 0.0, 0.0);
   gluCylinder(defquad, DROID_ANT_RADIUS, DROID_ANT_RADIUS, DROID_ANT_LENGTH, OBJ_SLICES, OBJ_STACKS);
   glPopMatrix();
   // point
   glPushMatrix();
-  glTranslated(0.0, (DROID_HEIGHT / 2.0) + DROID_RADIUS + DROID_ANT_LENGTH - DROID_RATIO, 0.0);
+  glTranslated(0.0, delta_y, 0.0);
   gluSphere(defquad, DROID_ANT_RADIUS, OBJ_SLICES, OBJ_STACKS);
   glPopMatrix();
 
@@ -63,7 +80,7 @@ void draw_droid_body(void) {
 void draw_droid_arm(int dir) {
   glPushMatrix();
 
-  glTranslated(dir == DROID_LEFT ? - DROID_RADIUS - DROID_ARM_RADIUS : DROID_RADIUS + DROID_ARM_RADIUS, 0.0, 0.0);
+  glTranslated(dir == DROID_LEFT ? - DROID_RADIUS - (1.2 * DROID_ARM_RADIUS) : DROID_RADIUS + (1.2 * DROID_ARM_RADIUS), 0.0, 0.0);
 
   // shoulder
   glPushMatrix();
@@ -125,22 +142,17 @@ void draw_droid(void) {
 
 
 void idle(void) {
-	// glutPostRedisplay();
+	glutPostRedisplay();
 }
 
 void display(void) {
 	identity(GL_MODELVIEW);
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  gluLookAt(CAM_X, CAM_Y, CAM_Z /* position*/,
+
+  gluLookAt(cam_x, cam_y, cam_z /* position*/,
             CENTER_X, CENTER_Y, CENTER_Z /* look at */,
             0.0, 1.0, 0.0 /* up vector */);
-
-  glPushMatrix();
-  glColor3d(0.5, 1.0, 1.0);
-  glTranslated(-15.0, 0.0, 0.0);
-  glutSolidSphere(5.0, OBJ_SLICES, OBJ_STACKS);
-  glPopMatrix();
 
   glPushMatrix();
   glColor3ubv(color_droid);
@@ -148,9 +160,9 @@ void display(void) {
   glPopMatrix();
 
   glPushMatrix();
-  glColor3d(1.0, 0.5, 1.0);
-  glTranslated(15, 0.0, 0.0);
-  glutSolidSphere(5.0, OBJ_SLICES, OBJ_STACKS);
+  glColor3d(1.0, 1.0, 1.0);
+  glTranslated(15.0, 0.0, 0.0);
+  drawEllipse(5.0, 10.0, 64);
   glPopMatrix();
 
   glutSwapBuffers();
@@ -165,6 +177,31 @@ void reshape(GLsizei w, GLsizei h) {
 	gluPerspective(45.0 /* angle of view */, (double) w / h /* aspect ratio */ , 1.0 /* near */, 100.0 /* far */);
 
   identity(GL_MODELVIEW);
+}
+
+// https://open.gl/transformations
+void special(int key, int x, int y) {
+  double camx = cam_x;
+  double camy = cam_y;
+  double camz = cam_z;
+  switch (key) {
+    case GLUT_KEY_LEFT:
+      cam_x = camx * COS_ONE_STEP - camz * SIN_ONE_STEP;
+      cam_z = camx * SIN_ONE_STEP + camz * COS_ONE_STEP;
+      break;
+    case GLUT_KEY_RIGHT:
+      cam_x = camx * COS_ONE_STEP + camz * SIN_ONE_STEP;
+      cam_z = -camx * SIN_ONE_STEP + camz * COS_ONE_STEP;
+      break;
+    case GLUT_KEY_UP:
+      cam_y = camy * COS_ONE_STEP + camz * SIN_ONE_STEP;
+      cam_z = -camy * SIN_ONE_STEP + camz * COS_ONE_STEP;
+      break;
+    case GLUT_KEY_DOWN:
+      cam_y = camy * COS_ONE_STEP - camz * SIN_ONE_STEP;
+      cam_z = camy * SIN_ONE_STEP + camz * COS_ONE_STEP;
+      break;
+  }
 }
 
 void init_gl(void) {
@@ -199,6 +236,8 @@ void init_gl(void) {
   glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, material_shininess);
 
   glShadeModel(GL_SMOOTH); // GL_SMOOTH is the default
+
+  glEnable(GL_NORMALIZE);
 
   glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
