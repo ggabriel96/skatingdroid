@@ -13,8 +13,9 @@ int main(int argc, char *argv[]) {
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	init_gl();
-  status = init_droid();
+  status = init_defquad();
 	if (status == 0)
     glutMainLoop();
+  else fprintf(stderr, "Failed to initialize defquad\n");
   return status;
 }

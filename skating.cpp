@@ -2,11 +2,158 @@
 #include <GL/glut.h>
 #include "skating.h"
 
-GLuint display_list_head;
+GLUquadricObj *defquad = NULL;
 
 void identity(GLenum model) {
   glMatrixMode(model);
   glLoadIdentity();
+}
+
+void draw_droid_antenna(int dir) {
+  glPushMatrix();
+
+  glTranslated(dir == DROID_LEFT ? - DROID_RADIUS / 2.0 : DROID_RADIUS / 2.0, 0.0, 0.0);
+
+  // antenna
+  glPushMatrix();
+  glTranslated(0.0, (DROID_HEIGHT / 2.0) + DROID_RADIUS + DROID_ANT_LENGTH - DROID_RATIO, 0.0);
+  glRotated(90.0, 1.0, 0.0, 0.0);
+  gluCylinder(defquad, DROID_ANT_RADIUS, DROID_ANT_RADIUS, DROID_ANT_LENGTH, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+  // point
+  glPushMatrix();
+  glTranslated(0.0, (DROID_HEIGHT / 2.0) + DROID_RADIUS + DROID_ANT_LENGTH - DROID_RATIO, 0.0);
+  gluSphere(defquad, DROID_ANT_RADIUS, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+
+  glPopMatrix();
+}
+
+void draw_droid_antennae(void) {
+  draw_droid_antenna(DROID_LEFT);
+  draw_droid_antenna(DROID_RIGHT);
+}
+
+void draw_droid_head(void) {
+  glPushMatrix();
+  glTranslated(0.0, DROID_HEIGHT / 2.0, 0.0);
+  gluSphere(defquad, DROID_RADIUS, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+}
+
+void draw_droid_body(void) {
+  glPushMatrix();
+  glTranslated(0.0, DROID_HEIGHT / 2.0, 0.0);
+  glRotated(90.0, 1.0, 0.0, 0.0);
+  // Draws a cylinder oriented along the z axis, with the base of the cylinder at z = 0 and the top at z = height.
+  // Like a sphere, the cylinder is subdivided around the z axis into a number of slices and along the z axis into
+  // a number of stacks. baseRadius is the radius of the cylinder at z = 0. topRadius is the radius of the cylinder
+  // at z = height. If topRadius is set to zero, then a cone is generated.
+  // void gluCylinder (GLUquadricObj *qobj, GLdouble baseRadius, GLdouble topRadius, GLdouble height, GLint slices, GLint stacks);
+  gluCylinder(defquad, DROID_RADIUS, DROID_RADIUS, DROID_HEIGHT, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslated(0.0, - DROID_HEIGHT / 2.0, 0.0);
+  glRotated(90.0, 1.0, 0.0, 0.0);
+  gluDisk(defquad, 0.0, DROID_RADIUS, OBJ_STACKS, OBJ_STACKS);
+  glPopMatrix();
+}
+
+void draw_droid_arm(int dir) {
+  glPushMatrix();
+
+  glTranslated(dir == DROID_LEFT ? - DROID_RADIUS - DROID_ARM_RADIUS : DROID_RADIUS + DROID_ARM_RADIUS, 0.0, 0.0);
+
+  // shoulder
+  glPushMatrix();
+  glTranslated(0.0, DROID_ARM_LENGTH - DROID_ARM_RADIUS, 0.0);
+  gluSphere(defquad, DROID_ARM_RADIUS, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+  // arm
+  glPushMatrix();
+  glTranslated(0.0, DROID_ARM_LENGTH - DROID_ARM_RADIUS, 0.0);
+  glRotated(90.0, 1.0, 0.0, 0.0);
+  gluCylinder(defquad, DROID_ARM_RADIUS, DROID_ARM_RADIUS, DROID_ARM_LENGTH, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+  // hand
+  glPushMatrix();
+  glTranslated(0.0, - DROID_ARM_RADIUS, 0.0);
+  gluSphere(defquad, DROID_ARM_RADIUS, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+
+  glPopMatrix();
+}
+
+void draw_droid_arms(void) {
+  draw_droid_arm(DROID_LEFT);
+  draw_droid_arm(DROID_RIGHT);
+}
+
+void draw_droid_leg(int dir) {
+  glPushMatrix();
+
+  glTranslated(dir == DROID_LEFT ? - DROID_RADIUS / 2.0 : DROID_RADIUS / 2.0, 0.0, 0.0);
+
+  // leg
+  glPushMatrix();
+  glTranslated(0.0, - DROID_HEIGHT / 2.0, 0.0);
+  glRotated(90.0, 1.0, 0.0, 0.0);
+  gluCylinder(defquad, DROID_LEG_RADIUS, DROID_LEG_RADIUS, DROID_LEG_LENGTH, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+  // foot
+  glPushMatrix();
+  glTranslated(0.0, (- DROID_HEIGHT / 2.0) - DROID_LEG_LENGTH, 0.0);
+  gluSphere(defquad, DROID_LEG_RADIUS, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+
+  glPopMatrix();
+}
+
+void draw_droid_legs(void) {
+  draw_droid_leg(DROID_LEFT);
+  draw_droid_leg(DROID_RIGHT);
+}
+
+void draw_droid(void) {
+  draw_droid_antennae();
+  draw_droid_head();
+  draw_droid_body();
+  draw_droid_arms();
+  draw_droid_legs();
+}
+
+
+void idle(void) {
+	// glutPostRedisplay();
+}
+
+void display(void) {
+	identity(GL_MODELVIEW);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  gluLookAt(CAM_X, CAM_Y, CAM_Z /* position*/,
+            CENTER_X, CENTER_Y, CENTER_Z /* look at */,
+            0.0, 1.0, 0.0 /* up vector */);
+
+  glPushMatrix();
+  glColor3d(0.5, 1.0, 1.0);
+  glTranslated(-15.0, 0.0, 0.0);
+  glutSolidSphere(5.0, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+
+  glPushMatrix();
+  glColor3ubv(color_droid);
+  draw_droid();
+  glPopMatrix();
+
+  glPushMatrix();
+  glColor3d(1.0, 0.5, 1.0);
+  glTranslated(15, 0.0, 0.0);
+  glutSolidSphere(5.0, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+
+  glutSwapBuffers();
 }
 
 void reshape(GLsizei w, GLsizei h) {
@@ -18,10 +165,6 @@ void reshape(GLsizei w, GLsizei h) {
 	gluPerspective(45.0 /* angle of view */, (double) w / h /* aspect ratio */ , 1.0 /* near */, 100.0 /* far */);
 
   identity(GL_MODELVIEW);
-}
-
-void idle(void) {
-	glutPostRedisplay();
 }
 
 void init_gl(void) {
@@ -61,34 +204,6 @@ void init_gl(void) {
 	glDepthFunc(GL_LESS);
 }
 
-void display(void) {
-	identity(GL_MODELVIEW);
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  gluLookAt(0.0, 30.0, 2.5 /* position*/,
-            0.0, 0.0, 0.0 /* look at */,
-            0.0, 1.0, 0.0 /* up vector */);
-
-  glPushMatrix();
-  glColor3d(0.5, 1.0, 1.0);
-  glTranslated(-15.0, 0.0, 0.0);
-  glutSolidSphere(5.0, OBJ_SLICES, OBJ_STACKS);
-  glPopMatrix();
-
-  glPushMatrix();
-  glColor3d(1.0, 1.0, 0.5);
-  glCallList(display_list_head);
-  glPopMatrix();
-
-  glPushMatrix();
-  glColor3d(1.0, 0.5, 1.0);
-  glTranslated(15, 0.0, 0.0);
-  glutSolidSphere(5.0, OBJ_SLICES, OBJ_STACKS);
-  glPopMatrix();
-
-  glutSwapBuffers();
-}
-
 // void quadric_err(GLenum errcode) {
 //   const GLubyte *estring = gluErrorString(errcode);
 //   fprintf(stderr, "Quadric error: %s\n", estring);
@@ -96,40 +211,30 @@ void display(void) {
 // }
 
 // http://www.glprogramming.com/red/chapter11.html#name2
-int init_droid(void) {
-  GLUquadricObj *qobj = NULL;
-  display_list_head = glGenLists(1);
-  qobj = gluNewQuadric();
-  if (qobj == NULL) {
-    fprintf(stderr, "Failed to initialize droid_body\n");
-    return -1;
-  }
+int init_defquad(void) {
+  defquad = gluNewQuadric();
+  if (defquad == NULL) return -1;
   // GLU_ERROR is the only legal value for which
   // For GLU_ERROR, fn is called with one parameter, which is the error code.
   // gluErrorString() can be used to convert the error code into an ASCII string.
-  // gluQuadricCallback(droid_body, GLU_ERROR, quadric_err);
+  // gluQuadricCallback(defquad, GLU_ERROR, quadric_err);
+
   // drawStyle controls the rendering style.
   // Legal values for drawStyle are GLU_POINT, GLU_LINE, GLU_SILHOUETTE, and GLU_FILL.
-  gluQuadricDrawStyle(qobj, GLU_FILL);
+  gluQuadricDrawStyle(defquad, GLU_FILL);
+
   // orientation is either GLU_OUTSIDE (the default) or GLU_INSIDE,
   // which controls the direction in which normals are pointing.
-  gluQuadricOrientation(qobj, GLU_OUTSIDE); // default
+  gluQuadricOrientation(defquad, GLU_OUTSIDE); // default
+
   // GLU_NONE means that no normals are generated and is intended for use without lighting.
   // GLU_FLAT generates one normal for each facet, which is often best for lighting with flat shading.
   // GLU_SMOOTH generates one normal for every vertex of the quadric, which is usually best for lighting with smooth shading.
-  gluQuadricNormals(qobj, GLU_SMOOTH);
+  gluQuadricNormals(defquad, GLU_SMOOTH);
+
   // For the quadrics object qobj, textureCoords is either GL_FALSE (the default) or GL_TRUE.
   // If the value of textureCoords is GL_TRUE, then texture coordinates are generated for the quadrics object.
   // The manner in which the texture coordinates are generated varies, depending upon the type of quadrics object rendered.
-  gluQuadricTexture (qobj, GL_FALSE);
-  // https://www.opengl.org/sdk/docs/man2/xhtml/glNewList.xml
-  glNewList(display_list_head, GL_COMPILE);
-  // Draws a cylinder oriented along the z axis, with the base of the cylinder at z = 0 and the top at z = height.
-  // Like a sphere, the cylinder is subdivided around the z axis into a number of slices and along the z axis into
-  // a number of stacks. baseRadius is the radius of the cylinder at z = 0. topRadius is the radius of the cylinder
-  // at z = height. If topRadius is set to zero, then a cone is generated.
-  // void gluCylinder (GLUquadricObj *qobj, GLdouble baseRadius, GLdouble topRadius, GLdouble height, GLint slices, GLint stacks);
-  gluCylinder(qobj, 5.0, 5.0, 5.0, OBJ_SLICES, OBJ_STACKS);
-  glEndList();
+  gluQuadricTexture (defquad, GL_FALSE);
   return 0;
 }
