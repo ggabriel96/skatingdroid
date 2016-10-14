@@ -4,7 +4,8 @@
 #include "skating.h"
 
 GLUquadricObj *defquad = NULL;
-double cam_x = 0.0, cam_y = 0.0, cam_z = 40.0;
+double center_x = 0.0, center_y = 0.0, center_z = 0.0;
+double cam_x = DEF_CAM_X, cam_y = DEF_CAM_Y, cam_z = DEF_CAM_Z;
 
 void identity(GLenum model) {
   glMatrixMode(model);
@@ -14,12 +15,12 @@ void identity(GLenum model) {
 void drawEllipse(double radx, double rady, int slices) {
   int d;
   double rad = 2 * M_PI / slices, x, y;
-	glBegin(GL_POLYGON);
+	glBegin(GL_TRIANGLE_FAN);
 	for (d = 0; d <= slices; d++) {
 		x = radx * sin(d * rad);
 		y = rady * cos(d * rad);
-    // glNormal3d(x, y, 0.0);
-		glVertex3d(x, y, 0.0);
+    glNormal3d(x, y, 1.0);
+    glVertex3d(x, y, 0.0);
 	}
 	glEnd();
 }
@@ -149,9 +150,7 @@ void display(void) {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  gluLookAt(cam_x, cam_y, cam_z /* position*/,
-            CENTER_X, CENTER_Y, CENTER_Z /* look at */,
-            0.0, 1.0, 0.0 /* up vector */);
+  gluLookAt(cam_x, cam_y, cam_z, center_x, center_y, center_z, 0.0, 1.0, 0.0);
 
   glPushMatrix();
   glColor3ubv(color_droid);
@@ -159,9 +158,10 @@ void display(void) {
   glPopMatrix();
 
   glPushMatrix();
-  glColor3d(1.0, 1.0, 1.0);
-  glTranslated(15.0, 0.0, 0.0);
-  drawEllipse(5.0, 10.0, 64);
+  glColor3ubv(color_skate);
+  glTranslated(0.0, (- DROID_HEIGHT / 2.0) - DROID_LEG_LENGTH - DROID_LEG_RADIUS - (SKATE_RADIUS * SKATE_SCALE_Y), 0.0);
+  glScaled(SKATE_SCALE_X, SKATE_SCALE_Y, SKATE_SCALE_Z);
+  gluSphere(defquad, SKATE_RADIUS, OBJ_SLICES, OBJ_STACKS);
   glPopMatrix();
 
   glutSwapBuffers();
@@ -210,21 +210,35 @@ void keyboard(unsigned char key, int x, int y) {
       break;
     case 'W':
       cam_y += PAN_STEP;
+      center_y += PAN_STEP;
       break;
     case 'A':
       cam_x -= PAN_STEP;
+      center_x -= PAN_STEP;
       break;
     case 'S':
       cam_y -= PAN_STEP;
+      center_y -= PAN_STEP;
       break;
     case 'D':
       cam_x += PAN_STEP;
+      center_x += PAN_STEP;
       break;
     case 'E':
       cam_z += PAN_STEP;
+      center_z += PAN_STEP;
       break;
     case 'Q':
       cam_z -= PAN_STEP;
+      center_z -= PAN_STEP;
+      break;
+    case 'c':
+      cam_x = DEF_CAM_X;
+      cam_y = DEF_CAM_Y;
+      cam_z = DEF_CAM_Z;
+      break;
+    case 'C':
+      center_x = center_y = center_z = 0.0;
       break;
   }
 }
