@@ -176,6 +176,22 @@ void draw_skate_wheels(void) {
   draw_skate_wheel(SKATE_FRONT);
 }
 
+void draw_skate_spoiler(void) {
+  glPushMatrix();
+    // glTranslated(0.0, 0.0, (- SKATE_SIZE * SKATE_SCALE_X));
+    glTranslated(0.0, (- DROID_HEIGHT / 2.0) - (2.0 * DROID_LEG_LENGTH), - SKATE_SIZE * SKATE_SCALE_X * 0.8);
+    glRotated(SKATE_SPOIL_ANGLE, -1.0, 0.0, 0.0);
+    glRotated(SKATE_SPOIL_ANGLE / 2.0, 0.0, 0.0, 1.0);
+    // Draws a partial disk on the z = 0 plane. A partial disk is similar to a complete disk,
+    // in terms of outerRadius, innerRadius, slices, and rings. The difference is that only a
+    // portion of a partial disk is drawn, starting from startAngle through startAngle+sweepAngle
+    // (where startAngle and sweepAngle are measured in degrees, where 0 degrees is along the +y axis,
+    // 90 degrees along the +x axis, 180 along the -y axis, and 270 along the -x axis).
+    // void gluPartialDisk (GLUquadricObj *qobj, GLdouble innerRadius, GLdouble outerRadius, GLint slices, GLint rings, GLdouble startAngle, GLdouble sweepAngle);
+    gluPartialDisk (defquad, SKATE_SPOIL_RADIUS_IN, SKATE_SPOIL_RADIUS_OUT, OBJ_SLICES, OBJ_STACKS, 0.0, SKATE_SPOIL_ANGLE);
+  glPopMatrix();
+}
+
 void draw_skate(void) {
   glColor3ubv(color_skate);
   draw_skate_board();
@@ -183,6 +199,8 @@ void draw_skate(void) {
   draw_skate_axes();
   glColor3ubv(color_skate_wheel);
   draw_skate_wheels();
+  glColor3ubv(color_skate_spoiler);
+  draw_skate_spoiler();
 }
 
 void idle(void) {

@@ -26,6 +26,7 @@ const GLubyte color_droid[] = {164, 199, 57};
 const GLubyte color_skate[] = {102, 51, 0};
 const GLubyte color_skate_axis[] = {129, 133, 140};
 const GLubyte color_skate_wheel[] = {40, 43, 42};
+const GLubyte color_skate_spoiler[] = {205, 33, 42};
 
 const double DROID_RADIUS = DROID_HEIGHT / 2.0;
 const double DROID_RATIO = DROID_RADIUS / 6.25;
@@ -46,6 +47,9 @@ const double SKATE_WHEEL_RADIUS = SKATE_SIZE / 20.0;
 const double SKATE_WHEEL_SCALE_X = SKATE_SIZE / 14.0;
 const double SKATE_WHEEL_SCALE_Y = SKATE_SIZE / 8.0;
 const double SKATE_WHEEL_SCALE_Z = SKATE_SIZE / 8.0;
+const double SKATE_SPOIL_RADIUS_IN = SKATE_SIZE / 3.0;
+const double SKATE_SPOIL_RADIUS_OUT = 1.5 * SKATE_SPOIL_RADIUS_IN;
+const double SKATE_SPOIL_ANGLE = 45.0;
 
 void idle(void);
 void display(void);
