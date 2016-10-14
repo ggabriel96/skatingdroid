@@ -4,8 +4,7 @@
 #include "skating.h"
 
 GLUquadricObj *defquad = NULL;
-double cam_x_angle = 0.0, cam_y_angle = 0.0;
-double cam_x = 1.0, cam_y = 1.0, cam_z = 40.0;
+double cam_x = 0.0, cam_y = 0.0, cam_z = 40.0;
 
 void identity(GLenum model) {
   glMatrixMode(model);
@@ -180,26 +179,52 @@ void reshape(GLsizei w, GLsizei h) {
 }
 
 // https://open.gl/transformations
-void special(int key, int x, int y) {
+void keyboard(unsigned char key, int x, int y) {
   double camx = cam_x;
   double camy = cam_y;
   double camz = cam_z;
   switch (key) {
-    case GLUT_KEY_LEFT:
-      cam_x = camx * COS_ONE_STEP - camz * SIN_ONE_STEP;
-      cam_z = camx * SIN_ONE_STEP + camz * COS_ONE_STEP;
-      break;
-    case GLUT_KEY_RIGHT:
-      cam_x = camx * COS_ONE_STEP + camz * SIN_ONE_STEP;
-      cam_z = -camx * SIN_ONE_STEP + camz * COS_ONE_STEP;
-      break;
-    case GLUT_KEY_UP:
+    case 'w':
       cam_y = camy * COS_ONE_STEP + camz * SIN_ONE_STEP;
       cam_z = -camy * SIN_ONE_STEP + camz * COS_ONE_STEP;
       break;
-    case GLUT_KEY_DOWN:
+    case 'a':
+      cam_x = camx * COS_ONE_STEP - camz * SIN_ONE_STEP;
+      cam_z = camx * SIN_ONE_STEP + camz * COS_ONE_STEP;
+      break;
+    case 's':
       cam_y = camy * COS_ONE_STEP - camz * SIN_ONE_STEP;
       cam_z = camy * SIN_ONE_STEP + camz * COS_ONE_STEP;
+      break;
+    case 'd':
+      cam_x = camx * COS_ONE_STEP + camz * SIN_ONE_STEP;
+      cam_z = -camx * SIN_ONE_STEP + camz * COS_ONE_STEP;
+      break;
+    case 'e':
+      cam_x = COS_ONE_STEP * camx + SIN_ONE_STEP * camy;
+      cam_y = -SIN_ONE_STEP * camx + COS_ONE_STEP * camy;
+      break;
+    case 'q':
+      cam_x = COS_ONE_STEP * camx - SIN_ONE_STEP * camy;
+      cam_y = SIN_ONE_STEP * camx + COS_ONE_STEP * camy;
+      break;
+    case 'W':
+      cam_y += PAN_STEP;
+      break;
+    case 'A':
+      cam_x -= PAN_STEP;
+      break;
+    case 'S':
+      cam_y -= PAN_STEP;
+      break;
+    case 'D':
+      cam_x += PAN_STEP;
+      break;
+    case 'E':
+      cam_z += PAN_STEP;
+      break;
+    case 'Q':
+      cam_z -= PAN_STEP;
       break;
   }
 }

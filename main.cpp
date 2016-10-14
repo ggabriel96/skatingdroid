@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	glutIdleFunc(idle);
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
-  glutSpecialFunc(special);
+  glutKeyboardFunc(keyboard);
 	init_gl();
   status = init_defquad();
 	if (status == 0)

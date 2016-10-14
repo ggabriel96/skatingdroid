@@ -1,3 +1,5 @@
+#include <math.h>
+
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 #define WINDOW_POS_X 0
@@ -21,6 +23,7 @@ const double DROID_ARM_RADIUS = (DROID_RADIUS / 4.0);
 const double DROID_LEG_LENGTH = (DROID_HEIGHT / 2.5);
 const double DROID_LEG_RADIUS = DROID_ARM_RADIUS;
 const GLubyte color_droid[] = {164, 199, 57};
+const double PAN_STEP = 1.0;
 const double ONE_STEP = 2 * M_PI / 180;
 const double SIN_ONE_STEP = sin(ONE_STEP);
 const double COS_ONE_STEP = cos(ONE_STEP);
@@ -28,6 +31,6 @@ const double COS_ONE_STEP = cos(ONE_STEP);
 void idle(void);
 void display(void);
 void reshape(GLsizei, GLsizei);
-void special(int, int, int);
+void keyboard(unsigned char, int, int);
 void init_gl(void);
 int init_defquad(void);
