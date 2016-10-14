@@ -138,8 +138,51 @@ void draw_skate_board(void) {
   glPopMatrix();
 }
 
+void draw_skate_axis(int dir) {
+  glPushMatrix();
+    glTranslated(- SKATE_AXIS_LENGTH / 2.0,
+      (- DROID_HEIGHT / 2.0) - DROID_LEG_LENGTH - DROID_LEG_RADIUS - (2 * SKATE_RADIUS * SKATE_SCALE_Y),
+      dir == SKATE_BACK ? (- SKATE_SIZE * SKATE_SCALE_X) - SKATE_WHEEL_RADIUS : (SKATE_SIZE * SKATE_SCALE_X) + SKATE_WHEEL_RADIUS);
+    glRotated(90.0, 0.0, 1.0, 0.0);
+    gluCylinder(defquad, SKATE_AXIS_RADIUS, SKATE_AXIS_RADIUS, SKATE_AXIS_LENGTH, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+}
+
+void draw_skate_axes(void) {
+  draw_skate_axis(SKATE_BACK);
+  draw_skate_axis(SKATE_FRONT);
+}
+
+void draw_skate_wheel(int dir) {
+  glPushMatrix();
+    glTranslated(0.0,
+      (- DROID_HEIGHT / 2.0) - DROID_LEG_LENGTH - DROID_LEG_RADIUS - (2 * SKATE_RADIUS * SKATE_SCALE_Y),
+      dir == SKATE_BACK ? (- SKATE_SIZE * SKATE_SCALE_X) - SKATE_WHEEL_RADIUS : (SKATE_SIZE * SKATE_SCALE_X) + SKATE_WHEEL_RADIUS);
+    glPushMatrix();
+      glTranslated(- SKATE_AXIS_LENGTH / 2.0, 0.0, 0.0);
+      glScaled(SKATE_WHEEL_SCALE_X, SKATE_WHEEL_SCALE_Y, SKATE_WHEEL_SCALE_Z);
+      gluSphere(defquad, SKATE_WHEEL_RADIUS, OBJ_SLICES, OBJ_STACKS);
+    glPopMatrix();
+    glPushMatrix();
+      glTranslated(SKATE_AXIS_LENGTH / 2.0, 0.0, 0.0);
+      glScaled(SKATE_WHEEL_SCALE_X, SKATE_WHEEL_SCALE_Y, SKATE_WHEEL_SCALE_Z);
+      gluSphere(defquad, SKATE_WHEEL_RADIUS, OBJ_SLICES, OBJ_STACKS);
+    glPopMatrix();
+  glPopMatrix();
+}
+
+void draw_skate_wheels(void) {
+  draw_skate_wheel(SKATE_BACK);
+  draw_skate_wheel(SKATE_FRONT);
+}
+
 void draw_skate(void) {
+  glColor3ubv(color_skate);
   draw_skate_board();
+  glColor3ubv(color_skate_axis);
+  draw_skate_axes();
+  glColor3ubv(color_skate_wheel);
+  draw_skate_wheels();
 }
 
 void idle(void) {
@@ -159,7 +202,6 @@ void display(void) {
   glPopMatrix();
 
   glPushMatrix();
-    glColor3ubv(color_skate);
     draw_skate();
   glPopMatrix();
 

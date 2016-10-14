@@ -13,6 +13,8 @@
 #define DROID_LEFT -1
 #define DROID_RIGHT 1
 #define DROID_HEIGHT 10.0
+#define SKATE_FRONT 1
+#define SKATE_BACK -1
 #define SKATE_SIZE DROID_HEIGHT
 
 const double PAN_STEP = 1.0;
@@ -22,6 +24,8 @@ const double COS_ONE_STEP = cos(ONE_STEP);
 
 const GLubyte color_droid[] = {164, 199, 57};
 const GLubyte color_skate[] = {102, 51, 0};
+const GLubyte color_skate_axis[] = {129, 133, 140};
+const GLubyte color_skate_wheel[] = {40, 43, 42};
 
 const double DROID_RADIUS = DROID_HEIGHT / 2.0;
 const double DROID_RATIO = DROID_RADIUS / 6.25;
@@ -36,6 +40,12 @@ const double SKATE_RADIUS = SKATE_SIZE / 1.5;
 const double SKATE_SCALE_X = SKATE_SIZE / 13.0;
 const double SKATE_SCALE_Y = SKATE_SIZE / 100.0;
 const double SKATE_SCALE_Z = SKATE_SIZE / 6.5;
+const double SKATE_AXIS_RADIUS = SKATE_SIZE / 30.0;
+const double SKATE_AXIS_LENGTH = SKATE_RADIUS;
+const double SKATE_WHEEL_RADIUS = SKATE_SIZE / 20.0;
+const double SKATE_WHEEL_SCALE_X = SKATE_SIZE / 14.0;
+const double SKATE_WHEEL_SCALE_Y = SKATE_SIZE / 8.0;
+const double SKATE_WHEEL_SCALE_Z = SKATE_SIZE / 8.0;
 
 void idle(void);
 void display(void);
