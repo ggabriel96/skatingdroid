@@ -7,6 +7,9 @@ GLUquadricObj *defquad = NULL;
 double center_x = 0.0, center_y = 0.0, center_z = 0.0;
 double cam_x = DEF_CAM_X, cam_y = DEF_CAM_Y, cam_z = DEF_CAM_Z;
 
+bool droid_skating_down = true;
+double droid_skating_y = 0.0;
+
 void identity(GLenum model) {
   glMatrixMode(model);
   glLoadIdentity();
@@ -35,14 +38,20 @@ void draw_droid_antenna(int dir) {
 }
 
 void draw_droid_antennae(void) {
-  draw_droid_antenna(DROID_LEFT);
-  draw_droid_antenna(DROID_RIGHT);
+  glPushMatrix();
+    glTranslated(0.0, droid_skating_y, 0.0);
+    draw_droid_antenna(DROID_LEFT);
+    draw_droid_antenna(DROID_RIGHT);
+  glPopMatrix();
 }
 
 void draw_droid_head(void) {
   glPushMatrix();
-    glTranslated(0.0, DROID_HEIGHT / 2.0, 0.0);
-    gluSphere(defquad, DROID_RADIUS, OBJ_SLICES, OBJ_STACKS);
+    glTranslated(0.0, droid_skating_y, 0.0);
+    glPushMatrix();
+      glTranslated(0.0, DROID_HEIGHT / 2.0, 0.0);
+      gluSphere(defquad, DROID_RADIUS, OBJ_SLICES, OBJ_STACKS);
+    glPopMatrix();
   glPopMatrix();
 }
 
@@ -60,25 +69,31 @@ void draw_droid_eye(int dir) {
 }
 
 void draw_droid_eyes(void) {
-  draw_droid_eye(DROID_LEFT);
-  draw_droid_eye(DROID_RIGHT);
+  glPushMatrix();
+    glTranslated(0.0, droid_skating_y, 0.0);
+    draw_droid_eye(DROID_LEFT);
+    draw_droid_eye(DROID_RIGHT);
+  glPopMatrix();
 }
 
 void draw_droid_body(void) {
   glPushMatrix();
-    glTranslated(0.0, DROID_HEIGHT / 2.0, 0.0);
-    glRotated(90.0, 1.0, 0.0, 0.0);
-    // Draws a cylinder oriented along the z axis, with the base of the cylinder at z = 0 and the top at z = height.
-    // Like a sphere, the cylinder is subdivided around the z axis into a number of slices and along the z axis into
-    // a number of stacks. baseRadius is the radius of the cylinder at z = 0. topRadius is the radius of the cylinder
-    // at z = height. If topRadius is set to zero, then a cone is generated.
-    // void gluCylinder (GLUquadricObj *qobj, GLdouble baseRadius, GLdouble topRadius, GLdouble height, GLint slices, GLint stacks);
-    gluCylinder(defquad, DROID_RADIUS, DROID_RADIUS, DROID_HEIGHT, OBJ_SLICES, OBJ_STACKS);
-  glPopMatrix();
-  glPushMatrix();
-    glTranslated(0.0, - DROID_HEIGHT / 2.0, 0.0);
-    glRotated(90.0, 1.0, 0.0, 0.0);
-    gluDisk(defquad, 0.0, DROID_RADIUS, OBJ_STACKS, OBJ_STACKS);
+    glTranslated(0.0, droid_skating_y, 0.0);
+    glPushMatrix();
+      glTranslated(0.0, DROID_HEIGHT / 2.0, 0.0);
+      glRotated(90.0, 1.0, 0.0, 0.0);
+      // Draws a cylinder oriented along the z axis, with the base of the cylinder at z = 0 and the top at z = height.
+      // Like a sphere, the cylinder is subdivided around the z axis into a number of slices and along the z axis into
+      // a number of stacks. baseRadius is the radius of the cylinder at z = 0. topRadius is the radius of the cylinder
+      // at z = height. If topRadius is set to zero, then a cone is generated.
+      // void gluCylinder (GLUquadricObj *qobj, GLdouble baseRadius, GLdouble topRadius, GLdouble height, GLint slices, GLint stacks);
+      gluCylinder(defquad, DROID_RADIUS, DROID_RADIUS, DROID_HEIGHT, OBJ_SLICES, OBJ_STACKS);
+    glPopMatrix();
+    glPushMatrix();
+      glTranslated(0.0, - DROID_HEIGHT / 2.0, 0.0);
+      glRotated(90.0, 1.0, 0.0, 0.0);
+      gluDisk(defquad, 0.0, DROID_RADIUS, OBJ_STACKS, OBJ_STACKS);
+    glPopMatrix();
   glPopMatrix();
 }
 
@@ -106,8 +121,11 @@ void draw_droid_arm(int dir) {
 }
 
 void draw_droid_arms(void) {
-  draw_droid_arm(DROID_LEFT);
-  draw_droid_arm(DROID_RIGHT);
+  glPushMatrix();
+    glTranslated(0.0, droid_skating_y, 0.0);
+    draw_droid_arm(DROID_LEFT);
+    draw_droid_arm(DROID_RIGHT);
+  glPopMatrix();
 }
 
 void draw_droid_leg(int dir) {
@@ -128,8 +146,11 @@ void draw_droid_leg(int dir) {
 }
 
 void draw_droid_legs(void) {
-  draw_droid_leg(DROID_LEFT);
-  draw_droid_leg(DROID_RIGHT);
+  glPushMatrix();
+    draw_droid_leg(DROID_LEFT);
+    glTranslated(0.0, droid_skating_y, 0.0);
+    draw_droid_leg(DROID_RIGHT);
+  glPopMatrix();
 }
 
 void draw_droid(void) {
@@ -217,6 +238,15 @@ void draw_skate(void) {
 }
 
 void idle(void) {
+  if (droid_skating_down) {
+    droid_skating_y -= DROID_SKATING_SPEED;
+    if (droid_skating_y <= -DROID_SKATING_DELTA)
+      droid_skating_down = false;
+  } else {
+    droid_skating_y += DROID_SKATING_SPEED;
+    if (droid_skating_y >= 0.0)
+      droid_skating_down = true;
+  }
 	glutPostRedisplay();
 }
 
@@ -228,6 +258,7 @@ void display(void) {
   gluLookAt(cam_x, cam_y, cam_z, center_x, center_y, center_z, 0.0, 1.0, 0.0);
 
   glPushMatrix();
+    glTranslated(SKATE_RADIUS / 1.5, 0.0, 0.0);
     draw_droid();
   glPopMatrix();
 
