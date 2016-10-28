@@ -12,22 +12,13 @@ void identity(GLenum model) {
   glLoadIdentity();
 }
 
-void drawEllipse(double radx, double rady, int slices) {
-  int d;
-  double rad = 2 * M_PI / slices, x, y;
-	glBegin(GL_TRIANGLE_FAN);
-  	for (d = 0; d <= slices; d++) {
-  		x = radx * sin(d * rad);
-  		y = rady * cos(d * rad);
-      glNormal3d(x, y, 1.0);
-      glVertex3d(x, y, 0.0);
-  	}
-	glEnd();
-}
-
 void draw_droid_antenna(int dir) {
   double delta_y = (DROID_HEIGHT / 2.0) + DROID_RADIUS + DROID_ANT_LENGTH - DROID_RATIO;
   glPushMatrix();
+    // rotating twice because I want them to be more slanted
+    // and increasing the 16.0 degrees below would just rotate
+    // the antenna around the head, which is not precisely that.
+    // I want to rotate it when it's at the origin
     glRotated(16.0, 0.0, 0.0, dir == DROID_LEFT ? 1.0 : -1.0);
     glTranslated(0.0, delta_y, 0.0);
     glRotated(10.0, 0.0, 0.0, dir == DROID_LEFT ? 1.0 : -1.0);
@@ -58,7 +49,10 @@ void draw_droid_head(void) {
 void draw_droid_eye(int dir) {
   glPushMatrix();
     glTranslated(0.0, DROID_RADIUS - DROID_EYE_RADIUS, 0.0);
+    // rotating the eye 56.25 degrees "latitudinally" around the head
     glRotated(56.25, 1.0, 0.0, 0.0);
+    // rotating on z around a radius of DROID_HEIGHT / 2.0
+    // (radius of the head, rotating the eye "longitudinally" around the head)
     glRotated(dir == DROID_LEFT ? - 20.0 : 20.0, 0.0, 0.0, 1.0);
     glTranslated(0.0, (DROID_HEIGHT / 2.0), 0.0);
     gluSphere(defquad, DROID_EYE_RADIUS, OBJ_SLICES, OBJ_STACKS);
