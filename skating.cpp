@@ -28,8 +28,9 @@ void drawEllipse(double radx, double rady, int slices) {
 void draw_droid_antenna(int dir) {
   double delta_y = (DROID_HEIGHT / 2.0) + DROID_RADIUS + DROID_ANT_LENGTH - DROID_RATIO;
   glPushMatrix();
-    glRotated(15.0, 0.0, 0.0, dir == DROID_LEFT ? 1.0 : -1.0);
+    glRotated(16.0, 0.0, 0.0, dir == DROID_LEFT ? 1.0 : -1.0);
     glTranslated(0.0, delta_y, 0.0);
+    glRotated(10.0, 0.0, 0.0, dir == DROID_LEFT ? 1.0 : -1.0);
     // antenna
     glPushMatrix();
       glRotated(90.0, 1.0, 0.0, 0.0);
@@ -54,6 +55,21 @@ void draw_droid_head(void) {
   glPopMatrix();
 }
 
+void draw_droid_eye(int dir) {
+  glPushMatrix();
+    glTranslated(0.0, DROID_RADIUS - DROID_EYE_RADIUS, 0.0);
+    glRotated(56.25, 1.0, 0.0, 0.0);
+    glRotated(dir == DROID_LEFT ? - 20.0 : 20.0, 0.0, 0.0, 1.0);
+    glTranslated(0.0, (DROID_HEIGHT / 2.0), 0.0);
+    gluSphere(defquad, DROID_EYE_RADIUS, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+}
+
+void draw_droid_eyes(void) {
+  draw_droid_eye(DROID_LEFT);
+  draw_droid_eye(DROID_RIGHT);
+}
+
 void draw_droid_body(void) {
   glPushMatrix();
     glTranslated(0.0, DROID_HEIGHT / 2.0, 0.0);
@@ -74,7 +90,7 @@ void draw_droid_body(void) {
 
 void draw_droid_arm(int dir) {
   glPushMatrix();
-    glTranslated(dir == DROID_LEFT ? - DROID_RADIUS - (1.2 * DROID_ARM_RADIUS) : DROID_RADIUS + (1.2 * DROID_ARM_RADIUS), 0.0, 0.0);
+    glTranslated(dir == DROID_LEFT ? - DROID_RADIUS - (1.1 * DROID_ARM_RADIUS) : DROID_RADIUS + (1.1 * DROID_ARM_RADIUS), 0.0, 0.0);
     glPushMatrix();
       glTranslated(0.0, DROID_ARM_LENGTH - DROID_ARM_RADIUS, 0.0);
       // shoulder
@@ -123,11 +139,14 @@ void draw_droid_legs(void) {
 }
 
 void draw_droid(void) {
+  glColor3ubv(color_droid);
   draw_droid_antennae();
   draw_droid_head();
   draw_droid_body();
   draw_droid_arms();
   draw_droid_legs();
+  glColor3ubv(color_droid_eyes);
+  draw_droid_eyes();
 }
 
 void draw_skate_board(void) {
@@ -215,7 +234,6 @@ void display(void) {
   gluLookAt(cam_x, cam_y, cam_z, center_x, center_y, center_z, 0.0, 1.0, 0.0);
 
   glPushMatrix();
-    glColor3ubv(color_droid);
     draw_droid();
   glPopMatrix();
 

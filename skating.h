@@ -23,6 +23,7 @@ const double SIN_ONE_STEP = sin(ONE_STEP);
 const double COS_ONE_STEP = cos(ONE_STEP);
 
 const GLubyte color_droid[] = {164, 199, 57};
+const GLubyte color_droid_eyes[] = {255, 255, 255};
 const GLubyte color_skate[] = {102, 51, 0};
 const GLubyte color_skate_axis[] = {129, 133, 140};
 const GLubyte color_skate_wheel[] = {40, 43, 42};
@@ -30,8 +31,9 @@ const GLubyte color_skate_spoiler[] = {205, 33, 42};
 
 const double DROID_RADIUS = DROID_HEIGHT / 2.0;
 const double DROID_RATIO = DROID_RADIUS / 6.25;
-const double DROID_ANT_LENGTH = DROID_HEIGHT / 3.0;
+const double DROID_ANT_LENGTH = DROID_HEIGHT / 4.5;
 const double DROID_ANT_RADIUS = DROID_RADIUS / 20.0;
+const double DROID_EYE_RADIUS = DROID_RADIUS / 10.0;
 const double DROID_ARM_LENGTH = DROID_HEIGHT / 2.0;
 const double DROID_ARM_RADIUS = DROID_RADIUS / 4.0;
 const double DROID_LEG_LENGTH = DROID_HEIGHT / 2.5;
