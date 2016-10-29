@@ -1,13 +1,13 @@
 #include <math.h>
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH 720
+#define WINDOW_HEIGHT 480
 #define WINDOW_POS_X 0
 #define WINDOW_POS_Y 0
 #define WINDOW_TITLE "Skating Droid"
 #define DEF_CAM_X 0.0
 #define DEF_CAM_Y 0.0
-#define DEF_CAM_Z 35.0
+#define DEF_CAM_Z 50.0
 #define OBJ_SLICES 64
 #define OBJ_STACKS 64
 #define DROID_LEFT -1

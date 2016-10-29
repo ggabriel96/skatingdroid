@@ -7,8 +7,9 @@ GLUquadricObj *defquad = NULL;
 double center_x = 0.0, center_y = 0.0, center_z = 0.0;
 double cam_x = DEF_CAM_X, cam_y = DEF_CAM_Y, cam_z = DEF_CAM_Z;
 
-bool droid_skating_down = true, droid_skating_fwd = false;
-double droid_skating_y = - DROID_SKATING_DELTA / 2.0, droid_skating_slant = 0.0;
+int droid_skating_count = 0;
+bool droid_skating_down = true, droid_skating_fwd = false, droid_skating_body = false;
+double droid_skating_y = - DROID_SKATING_DELTA / 2.0, droid_skating_slant = 0.0, droid_skating_body_slant = 0.0;
 
 void identity(GLenum model) {
   glMatrixMode(model);
@@ -158,13 +159,18 @@ void draw_droid_legs(void) {
 
 void draw_droid(void) {
   glColor3ubv(color_droid);
-  draw_droid_antennae();
-  draw_droid_head();
-  draw_droid_body();
-  draw_droid_arms();
   draw_droid_legs();
-  glColor3ubv(color_droid_eyes);
-  draw_droid_eyes();
+  glPushMatrix();
+    if (droid_skating_body) {
+      glRotated(droid_skating_slant, 1.0, 0.0, 0.0);
+    }
+    draw_droid_antennae();
+    draw_droid_head();
+    draw_droid_body();
+    draw_droid_arms();
+    glColor3ubv(color_droid_eyes);
+    draw_droid_eyes();
+  glPopMatrix();
 }
 
 void draw_skate_board(void) {
@@ -252,12 +258,18 @@ void idle(void) {
     droid_skating_y += DROID_SKATING_VERT_SPEED;
     if (droid_skating_y >= 0.0) {
       droid_skating_down = true;
+      droid_skating_count++;
+      droid_skating_body = false;
     } else if (droid_skating_y >= - DROID_SKATING_DELTA / 2.0) {
       droid_skating_fwd = true;
     }
   }
   if (droid_skating_fwd) droid_skating_slant -= DROID_SKATING_FWD_SPEED;
   else droid_skating_slant += DROID_SKATING_BWD_SPEED;
+  if (droid_skating_count == 4) {
+    droid_skating_count = -1;
+    droid_skating_body = true;
+  }
 	glutPostRedisplay();
 }
 
