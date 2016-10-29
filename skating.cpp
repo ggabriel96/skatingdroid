@@ -9,7 +9,7 @@ double cam_x = DEF_CAM_X, cam_y = DEF_CAM_Y, cam_z = DEF_CAM_Z;
 
 int droid_skating_count = 0;
 bool droid_skating_down = true, droid_skating_fwd = false, droid_skating_body = false;
-double droid_skating_y = - DROID_SKATING_DELTA / 2.0, droid_skating_slant = 0.0, droid_skating_body_slant = 0.0;
+double droid_skating_y = - DROID_SKATING_DELTA / 2.0, droid_skating_slant = 0.0, droid_skating_body_slant = 0.0, skate_wheel_spin = 0.0;
 
 void identity(GLenum model) {
   glMatrixMode(model);
@@ -196,21 +196,24 @@ void draw_skate_axes(void) {
   draw_skate_axis(SKATE_FRONT);
 }
 
+void draw_skate_wheel_parts(int dir) {
+  for (int i = 0; i < SKATE_WHEEL_PARTS; i++) {
+    glPushMatrix();
+      glRotated(skate_wheel_spin + i * SKATE_WHEEL_OFFSET, 1.0, 0.0, 0.0);
+      glTranslated(dir * SKATE_AXIS_LENGTH / 2.0, 0.0, 0.0);
+      glScaled(SKATE_WHEEL_SCALE_X, SKATE_WHEEL_SCALE_Y, SKATE_WHEEL_SCALE_Z);
+      gluSphere(defquad, SKATE_WHEEL_RADIUS, OBJ_SLICES, OBJ_STACKS);
+    glPopMatrix();
+  }
+}
+
 void draw_skate_wheel(int dir) {
   glPushMatrix();
     glTranslated(0.0,
       (- DROID_HEIGHT / 2.0) - DROID_LEG_LENGTH - DROID_LEG_RADIUS - (2 * SKATE_RADIUS * SKATE_SCALE_Y),
       dir == SKATE_BACK ? (- SKATE_SIZE * SKATE_SCALE_X) - SKATE_WHEEL_RADIUS : (SKATE_SIZE * SKATE_SCALE_X) + SKATE_WHEEL_RADIUS);
-    glPushMatrix();
-      glTranslated(- SKATE_AXIS_LENGTH / 2.0, 0.0, 0.0);
-      glScaled(SKATE_WHEEL_SCALE_X, SKATE_WHEEL_SCALE_Y, SKATE_WHEEL_SCALE_Z);
-      gluSphere(defquad, SKATE_WHEEL_RADIUS, OBJ_SLICES, OBJ_STACKS);
-    glPopMatrix();
-    glPushMatrix();
-      glTranslated(SKATE_AXIS_LENGTH / 2.0, 0.0, 0.0);
-      glScaled(SKATE_WHEEL_SCALE_X, SKATE_WHEEL_SCALE_Y, SKATE_WHEEL_SCALE_Z);
-      gluSphere(defquad, SKATE_WHEEL_RADIUS, OBJ_SLICES, OBJ_STACKS);
-    glPopMatrix();
+    draw_skate_wheel_parts(SKATE_LEFT);
+    draw_skate_wheel_parts(SKATE_RIGHT);
   glPopMatrix();
 }
 
@@ -231,7 +234,7 @@ void draw_skate_spoiler(void) {
     // (where startAngle and sweepAngle are measured in degrees, where 0 degrees is along the +y axis,
     // 90 degrees along the +x axis, 180 along the -y axis, and 270 along the -x axis).
     // void gluPartialDisk (GLUquadricObj *qobj, GLdouble innerRadius, GLdouble outerRadius, GLint slices, GLint rings, GLdouble startAngle, GLdouble sweepAngle);
-    gluPartialDisk (defquad, SKATE_SPOIL_RADIUS_IN, SKATE_SPOIL_RADIUS_OUT, OBJ_SLICES, OBJ_STACKS, 0.0, SKATE_SPOIL_ANGLE);
+    gluPartialDisk(defquad, SKATE_SPOIL_RADIUS_IN, SKATE_SPOIL_RADIUS_OUT, OBJ_SLICES, OBJ_STACKS, 0.0, SKATE_SPOIL_ANGLE);
   glPopMatrix();
 }
 
@@ -246,7 +249,19 @@ void draw_skate(void) {
   draw_skate_spoiler();
 }
 
+void draw_ground(void) {
+  glPushMatrix();
+    glColor3ubv(color_grass);
+    glTranslated(0.0, - DROID_HEIGHT - (2 * SKATE_RADIUS * SKATE_SCALE_Y) - 2 * SKATE_WHEEL_RADIUS, 0.0);
+    // glTranslated(0.0, - DROID_HEIGHT - (2 * SKATE_RADIUS * SKATE_SCALE_Y) - SKATE_WHEEL_RADIUS, 0.0);
+    // glTranslated(0.0, (- DROID_HEIGHT / 2.0) - DROID_LEG_LENGTH - DROID_LEG_RADIUS - (2 * SKATE_RADIUS * SKATE_SCALE_Y), 0.0);
+    glRotated(270.0, 1.0, 0.0, 0.0);
+    gluDisk(defquad, 0.0, 10.0 * DROID_RADIUS, OBJ_SLICES, OBJ_STACKS);
+  glPopMatrix();
+}
+
 void idle(int value) {
+  skate_wheel_spin += SKATE_WHEEL_SPEED;
   if (droid_skating_down) {
     droid_skating_y -= DROID_SKATING_VERT_SPEED;
     if (droid_skating_y <= -DROID_SKATING_DELTA) {
@@ -292,6 +307,10 @@ void display(void) {
     draw_skate();
   glPopMatrix();
 
+  glPushMatrix();
+    draw_ground();
+  glPopMatrix();
+
   glutSwapBuffers();
 }
 
@@ -301,7 +320,7 @@ void reshape(GLsizei w, GLsizei h) {
 	glViewport(0, 0, w, h);
 
   identity(GL_PROJECTION);
-	gluPerspective(45.0 /* angle of view */, (double) w / h /* aspect ratio */ , 1.0 /* near */, 100.0 /* far */);
+	gluPerspective(PERSPECTIVE_AOV /* angle of view */, (double) w / h /* aspect ratio */ , PERSPECTIVE_NEAR, PERSPECTIVE_FAR);
 
   identity(GL_MODELVIEW);
 }
