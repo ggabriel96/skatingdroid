@@ -1,6 +1,9 @@
 FLAGS = -Wall -O2 --std=c++11
 LINKS = -lGL -lGLU -lglut -lm
 
+run: all
+	./skatingdroid.o
+
 all: skatingdroid.o
 
 skatingdroid.o: main.o skating.o
