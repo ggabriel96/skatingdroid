@@ -17,6 +17,8 @@
 #define SKATE_BACK -1
 #define SKATE_SIZE DROID_HEIGHT
 
+const double TARGET_FPS = 60.0;
+
 const double PAN_STEP = 1.0;
 const double ONE_STEP = 2 * M_PI / 180;
 const double SIN_ONE_STEP = sin(ONE_STEP);
@@ -58,7 +60,7 @@ const double DROID_SKATING_FWD_SPEED = 0.547;
 const double DROID_SKATING_BWD_SPEED = 0.4;
 const double DROID_SKATING_DELTA = (SKATE_RADIUS * SKATE_SCALE_Y) + (SKATE_AXIS_RADIUS) + (2 * SKATE_WHEEL_RADIUS * SKATE_WHEEL_SCALE_Y);
 
-void idle(void);
+void idle(int);
 void display(void);
 void reshape(GLsizei, GLsizei);
 void keyboard(unsigned char, int, int);

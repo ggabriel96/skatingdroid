@@ -9,8 +9,9 @@ int main(int argc, char *argv[]) {
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutInitWindowPosition(WINDOW_POS_X, WINDOW_POS_Y);
 	glutCreateWindow(WINDOW_TITLE);
-	glutIdleFunc(idle);
+	// glutIdleFunc(idle);
 	glutDisplayFunc(display);
+  glutTimerFunc(1000.0 / TARGET_FPS, idle, 0);
 	glutReshapeFunc(reshape);
   glutKeyboardFunc(keyboard);
 	init_gl();

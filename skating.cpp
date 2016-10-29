@@ -246,7 +246,7 @@ void draw_skate(void) {
   draw_skate_spoiler();
 }
 
-void idle(void) {
+void idle(int value) {
   if (droid_skating_down) {
     droid_skating_y -= DROID_SKATING_VERT_SPEED;
     if (droid_skating_y <= -DROID_SKATING_DELTA) {
@@ -270,6 +270,9 @@ void idle(void) {
     droid_skating_count = -1;
     droid_skating_body = true;
   }
+  // display was called once first because of glutDisplayFunc
+  // so we first update the values above and then tell it to redisplay
+  glutTimerFunc(1000.0 / TARGET_FPS, idle, 0);
 	glutPostRedisplay();
 }
 
