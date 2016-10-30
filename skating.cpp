@@ -164,12 +164,17 @@ void draw_droid(void) {
     if (droid_skating_body) {
       glRotated(droid_skating_slant, 1.0, 0.0, 0.0);
     }
-    draw_droid_antennae();
-    draw_droid_head();
     draw_droid_body();
     draw_droid_arms();
-    glColor3ubv(color_droid_eyes);
-    draw_droid_eyes();
+    glPushMatrix();
+      if (droid_skating_body) {
+        glRotated(2 * droid_skating_slant, 0.0, 1.0, 0.0);
+      }
+      draw_droid_antennae();
+      draw_droid_head();
+      glColor3ubv(color_droid_eyes);
+      draw_droid_eyes();
+    glPopMatrix();
   glPopMatrix();
 }
 
@@ -282,7 +287,7 @@ void idle(int value) {
   }
   if (droid_skating_fwd) droid_skating_slant -= DROID_SKATING_FWD_SPEED;
   else droid_skating_slant += DROID_SKATING_BWD_SPEED;
-  if (droid_skating_count == 4) {
+  if (droid_skating_count == DROID_SKATING_BODY_COUNT) {
     droid_skating_count = -1;
     droid_skating_body = true;
   }

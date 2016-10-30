@@ -8,7 +8,7 @@
 #define TARGET_FPS 30.0
 #define DEF_CAM_X 0.0
 #define DEF_CAM_Y 0.0
-#define DEF_CAM_Z 50.0
+#define DEF_CAM_Z 100.0
 #define PERSPECTIVE_AOV 45.0
 #define PERSPECTIVE_NEAR 0.1
 #define PERSPECTIVE_FAR 200.0
@@ -17,6 +17,7 @@
 #define DROID_LEFT -1
 #define DROID_RIGHT 1
 #define DROID_HEIGHT 10.0
+#define DROID_SKATING_BODY_COUNT 2
 #define SKATE_LEFT -1
 #define SKATE_RIGHT 1
 #define SKATE_FRONT 1
@@ -25,7 +26,7 @@
 #define SKATE_WHEEL_PARTS 6
 
 const double PAN_STEP = 1.0;
-const double ONE_STEP = 2 * M_PI / 180;
+const double ONE_STEP =  M_PI / 260.0;
 const double SIN_ONE_STEP = sin(ONE_STEP);
 const double COS_ONE_STEP = cos(ONE_STEP);
 
@@ -35,7 +36,7 @@ const GLubyte color_skate[] = {102, 51, 0};
 const GLubyte color_skate_axis[] = {129, 133, 140};
 const GLubyte color_skate_wheel[] = {40, 43, 42};
 const GLubyte color_skate_spoiler[] = {205, 33, 42};
-const GLubyte color_ground[] = {255, 182, 193};
+const GLubyte color_ground[] = {155, 50, 50};
 
 const double DROID_RADIUS = DROID_HEIGHT / 2.0;
 const double DROID_RATIO = DROID_RADIUS / 6.25;
@@ -65,7 +66,7 @@ const double SKATE_WHEEL_OFFSET = 180.0 / SKATE_WHEEL_PARTS;
 const double DROID_SKATING_VERT_SPEED = 0.04;
 const double DROID_SKATING_FWD_SPEED = 0.547;
 const double DROID_SKATING_BWD_SPEED = 0.4;
-const double DROID_SKATING_MOVEMENT_SPEED = 1.0;
+const double DROID_SKATING_MOVEMENT_SPEED = 0.75;
 const double DROID_SKATING_DELTA = (SKATE_RADIUS * SKATE_SCALE_Y) + (SKATE_AXIS_RADIUS) + (2 * SKATE_WHEEL_RADIUS * SKATE_WHEEL_SCALE_Y);
 
 const double SKATE_WHEEL_SPEED = 4.0;
