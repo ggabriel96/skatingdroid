@@ -17,6 +17,7 @@
 #define DROID_LEFT -1
 #define DROID_RIGHT 1
 #define DROID_HEIGHT 10.0
+// frequency at which the body will be used in the skating animation
 #define DROID_SKATING_BODY_COUNT 2
 #define SKATE_LEFT -1
 #define SKATE_RIGHT 1

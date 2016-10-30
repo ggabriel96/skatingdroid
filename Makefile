@@ -1,4 +1,4 @@
-FLAGS = -Wall -O2 --std=c++11
+FLAGS = -Wall -O2
 LINKS = -lGL -lGLU -lglut -lm
 
 run: all
