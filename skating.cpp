@@ -9,7 +9,7 @@ double cam_x = DEF_CAM_X, cam_y = DEF_CAM_Y, cam_z = DEF_CAM_Z;
 
 int droid_skating_count = 0;
 bool droid_skating_down = true, droid_skating_fwd = false, droid_skating_body = false;
-double droid_skating_y = - DROID_SKATING_DELTA / 2.0, droid_skating_slant = 0.0, droid_skating_body_slant = 0.0, skate_wheel_spin = 0.0;
+double droid_skating_movement = 0.0, droid_skating_y = - DROID_SKATING_DELTA / 2.0, droid_skating_slant = 0.0, droid_skating_body_slant = 0.0, skate_wheel_spin = 0.0;
 
 void identity(GLenum model) {
   glMatrixMode(model);
@@ -22,7 +22,7 @@ void draw_droid_antenna(int dir) {
     // rotating twice because I want them to be more slanted
     // and increasing the 16.0 degrees below would just rotate
     // the antenna around the head, which is not precisely that.
-    // I want to rotate it when it's at the origin
+    // I want to rotate it when it's "at the origin"
     glRotated(16.0, 0.0, 0.0, dir == DROID_LEFT ? 1.0 : -1.0);
     glTranslated(0.0, delta_y, 0.0);
     glRotated(10.0, 0.0, 0.0, dir == DROID_LEFT ? 1.0 : -1.0);
@@ -251,17 +251,18 @@ void draw_skate(void) {
 
 void draw_ground(void) {
   glPushMatrix();
-    glColor3ubv(color_grass);
+    glColor3ubv(color_ground);
     glTranslated(0.0, - DROID_HEIGHT - (2 * SKATE_RADIUS * SKATE_SCALE_Y) - 2 * SKATE_WHEEL_RADIUS, 0.0);
     // glTranslated(0.0, - DROID_HEIGHT - (2 * SKATE_RADIUS * SKATE_SCALE_Y) - SKATE_WHEEL_RADIUS, 0.0);
     // glTranslated(0.0, (- DROID_HEIGHT / 2.0) - DROID_LEG_LENGTH - DROID_LEG_RADIUS - (2 * SKATE_RADIUS * SKATE_SCALE_Y), 0.0);
     glRotated(270.0, 1.0, 0.0, 0.0);
-    gluDisk(defquad, 0.0, 10.0 * DROID_RADIUS, OBJ_SLICES, OBJ_STACKS);
+    gluDisk(defquad, 0.0, GROUND_RADIUS, OBJ_SLICES, OBJ_STACKS);
   glPopMatrix();
 }
 
 void idle(int value) {
   skate_wheel_spin += SKATE_WHEEL_SPEED;
+  droid_skating_movement += DROID_SKATING_MOVEMENT_SPEED;
   if (droid_skating_down) {
     droid_skating_y -= DROID_SKATING_VERT_SPEED;
     if (droid_skating_y <= -DROID_SKATING_DELTA) {
@@ -299,12 +300,16 @@ void display(void) {
   gluLookAt(cam_x, cam_y, cam_z, center_x, center_y, center_z, 0.0, 1.0, 0.0);
 
   glPushMatrix();
-    glTranslated(SKATE_RADIUS / 1.5, 0.0, 0.0);
-    draw_droid();
-  glPopMatrix();
+    glRotated(-droid_skating_movement, 0.0, 1.0, 0.0);
+    glTranslated(GROUND_RADIUS - 2 * DROID_RADIUS, 0.0, 0.0);
+    glPushMatrix();
+      glTranslated(SKATE_RADIUS / 1.5, 0.0, 0.0);
+      draw_droid();
+    glPopMatrix();
 
-  glPushMatrix();
-    draw_skate();
+    glPushMatrix();
+      draw_skate();
+    glPopMatrix();
   glPopMatrix();
 
   glPushMatrix();
@@ -401,15 +406,22 @@ void init_gl(void) {
   // location of the light in eye coordinates, and attenuation is enabled.
   const GLfloat light0_position[] = {25.0, 25.0, 25.0, 1.0};
   glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
-  const GLfloat light0_ambient[] = {0.0, 0.0, 0.0, 1.0};
-  glLightfv(GL_LIGHT0, GL_AMBIENT, light0_ambient);
+  const GLfloat light1_position[] = {-25.0, -25.0, -25.0, 1.0};
+  glLightfv(GL_LIGHT1, GL_POSITION, light1_position);
+  const GLfloat light_ambient[] = {0.0, 0.0, 0.0, 1.0};
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
   const GLfloat light0_color[] = {1.0, 1.0, 1.0, 1.0};
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_color);
   glLightfv(GL_LIGHT0, GL_SPECULAR, light0_color);
+  const GLfloat light1_color[] = {0.0, 0.5, 1.0, 1.0};
+  glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_color);
+  glLightfv(GL_LIGHT1, GL_SPECULAR, light1_color);
   const GLfloat light_ambient_global[] = {0.2, 0.2, 0.2, 1.0}; // default is 0.2, 0.2, 0.2, 1.0
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, light_ambient_global);
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHT1);
 
   // Enable GL_COLOR_MATERIAL and set glColorMaterial to GL_AMBIENT_AND_DIFFUSE.
   // This means that glMaterial will control the polygon's specular and emission

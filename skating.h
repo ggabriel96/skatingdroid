@@ -5,9 +5,9 @@
 #define WINDOW_POS_X 0
 #define WINDOW_POS_Y 0
 #define WINDOW_TITLE "Skating Droid"
-#define TARGET_FPS 60.0
+#define TARGET_FPS 30.0
 #define DEF_CAM_X 0.0
-#define DEF_CAM_Y 15.0
+#define DEF_CAM_Y 0.0
 #define DEF_CAM_Z 50.0
 #define PERSPECTIVE_AOV 45.0
 #define PERSPECTIVE_NEAR 0.1
@@ -35,7 +35,7 @@ const GLubyte color_skate[] = {102, 51, 0};
 const GLubyte color_skate_axis[] = {129, 133, 140};
 const GLubyte color_skate_wheel[] = {40, 43, 42};
 const GLubyte color_skate_spoiler[] = {205, 33, 42};
-const GLubyte color_grass[] = {1, 142, 14};
+const GLubyte color_ground[] = {255, 182, 193};
 
 const double DROID_RADIUS = DROID_HEIGHT / 2.0;
 const double DROID_RATIO = DROID_RADIUS / 6.25;
@@ -65,9 +65,12 @@ const double SKATE_WHEEL_OFFSET = 180.0 / SKATE_WHEEL_PARTS;
 const double DROID_SKATING_VERT_SPEED = 0.04;
 const double DROID_SKATING_FWD_SPEED = 0.547;
 const double DROID_SKATING_BWD_SPEED = 0.4;
+const double DROID_SKATING_MOVEMENT_SPEED = 1.0;
 const double DROID_SKATING_DELTA = (SKATE_RADIUS * SKATE_SCALE_Y) + (SKATE_AXIS_RADIUS) + (2 * SKATE_WHEEL_RADIUS * SKATE_WHEEL_SCALE_Y);
 
-const double SKATE_WHEEL_SPEED = 3.0;
+const double SKATE_WHEEL_SPEED = 4.0;
+
+const double GROUND_RADIUS = 10.0 * DROID_RADIUS;
 
 void idle(int);
 void display(void);
