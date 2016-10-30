@@ -381,13 +381,15 @@ void keyboard(unsigned char key, int x, int y) {
       cam_x += PAN_STEP;
       center_x += PAN_STEP;
       break;
-    case 'E':
-      cam_z += PAN_STEP;
-      center_z += PAN_STEP;
+    case '=':
+      if (cam_z > 0) cam_z -= PAN_STEP;
+      else if (cam_z < 0) cam_z += PAN_STEP;
       break;
-    case 'Q':
-      cam_z -= PAN_STEP;
-      center_z -= PAN_STEP;
+    case '-':
+      if (cam_z >= 0)
+        cam_z += PAN_STEP;
+      else if (cam_z < 0)
+        cam_z -= PAN_STEP;
       break;
     case 'c':
       cam_x = DEF_CAM_X;
